@@ -57,7 +57,7 @@ export default function Cart() {
         <ShoppingCart className="w-16 h-16 mx-auto text-gray-400 mb-4" />
         <p className="text-gray-500 mb-4">Your cart is empty</p>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate(`/menu?restaurantId=${restaurantId}&tableNo=${tableNo}`)}
           className="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors"
         >
           Return to Menu
