@@ -37,7 +37,7 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
           <X className="w-5 h-5" />
         </button>
         
-        <h2 className="text-2xl font-bold mb-4">Delivery Details</h2>
+        <h2 className="text-2xl font-bold mb-4">User Details</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -91,7 +91,7 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Delivery Address
+              Address
             </label>
             <textarea
               value={details.address}

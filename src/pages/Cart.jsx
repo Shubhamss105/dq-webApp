@@ -5,17 +5,19 @@ import CartItem from '../components/CartItem';
 import UserDetailsModal from '../components/UserDetailsModal';
 import { useCart } from '../context/CartContext';
 import { placeOrder } from '../api/orderService';
-import { getUrlParams } from '../utils/urlParams';
+import { useRestaurant } from "../context/RestaurantContext";
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { cartItems, updateQuantity, totalAmount, clearCart } = useCart();
+  const { cartItems, updateQuantity, totalAmount, clearCart, removeFromCart } = useCart();
+  const { restaurantId, tableNo } = useRestaurant();
+
   const [showUserModal, setShowUserModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // const { restaurantId, tableNo } = getUrlParams();
-  const restaurantId='R1733641669'
-  const tableNo='1';
+
+  // const restaurantId='R1733641669'
+  // const tableNo='1';
 
 
   const handleUserDetailsSubmit = async (details) => {
@@ -80,14 +82,15 @@ export default function Cart() {
             key={item.id}
             item={item}
             onUpdateQuantity={(quantity) => updateQuantity(item.id, quantity)}
+            onRemoveItem={() => removeFromCart(item.id)}
           />
         ))}
       </div>
       
       <div className="border-t mt-6 pt-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-lg font-semibold">Total:</span>
-          <span className="text-xl font-bold text-purple-600">
+        <div className="flex justify-between items-center mb-4 mx-2">
+          <span className="text-xl font-semibold mx-2">Total:</span>
+          <span className="text-2xl font-bold text-purple-600">
             {totalAmount}
           </span>
         </div>
@@ -97,7 +100,7 @@ export default function Cart() {
           disabled={loading}
           className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400"
         >
-          {loading ? 'Processing...' : 'Pay and Order'}
+          {loading ? 'Processing...' : 'Place Order'}
         </button>
       </div>
 

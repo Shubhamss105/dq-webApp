@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Banner from '../components/Banner';
-import Categories from '../components/Categories';
-import { useMenu } from '../hooks/useMenu';
-import { useCategories } from '../hooks/useCategories';
-import { useCart } from '../context/CartContext';
-import { Loader2 } from 'lucide-react';
-import { fetchMenuByCategory } from '../api/menuService';
-import CartPopup from '../components/CartPopup';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useRestaurant } from "../context/RestaurantContext";
+import Banner from "../components/Banner";
+import Categories from "../components/Categories";
+import { useMenu } from "../hooks/useMenu";
+import { useCategories } from "../hooks/useCategories";
+import { useCart } from "../context/CartContext";
+import { Loader2 } from "lucide-react";
+import { fetchMenuByCategory } from "../api/menuService";
+import CartPopup from "../components/CartPopup";
 
 export default function Home() {
-  const restaurantId = 'R1733641669';
+  const [searchParams] = useSearchParams();
+  const { setRestaurantId, setTableNo } = useRestaurant();
+  const restaurantId = searchParams.get("restaurantId");
+  const tableNo = searchParams.get("tableNo");
+
   const { menuItems, loading: menuLoading, error: menuError } = useMenu(restaurantId);
   const { categories, loading: catLoading, error: catError } = useCategories(restaurantId);
   const { addToCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Set restaurantId and tableNo in the context
+    setRestaurantId(restaurantId);
+    setTableNo(tableNo);
+  }, [restaurantId, tableNo, setRestaurantId, setTableNo]);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -30,7 +41,7 @@ export default function Home() {
         const categoryItems = await fetchMenuByCategory(selectedCategory);
         setFilteredItems(categoryItems);
       } catch (error) {
-        console.error('Failed to fetch category items:', error);
+        console.error("Failed to fetch category items:", error);
         setFilteredItems([]);
       } finally {
         setLoading(false);
@@ -42,20 +53,15 @@ export default function Home() {
 
   const handleAddToCart = (item) => {
     if (!addToCart) {
-      console.error('addToCart is not defined.');
+      console.error("addToCart is not defined.");
       return;
     }
     addToCart(item);
   };
-  
 
   const MenuItem = ({ item }) => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img
-        src={item.itemImage}
-        alt={item.itemName}
-        className="w-full h-48 object-cover"
-      />
+      <img src={item.itemImage} alt={item.itemName} className="w-full h-48 object-cover" />
       <div className="p-4">
         <h3 className="text-lg font-semibold">{item.itemName}</h3>
         <p className="text-sm text-gray-600 mb-2">{item.category}</p>
@@ -101,7 +107,7 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <CartPopup/>
+      <CartPopup />
     </div>
   );
 }
