@@ -4,19 +4,22 @@ import { useNavigate } from 'react-router-dom';
 import { useRestaurant } from "../context/RestaurantContext";
 
 export default function Success() {
-
   const navigate = useNavigate();
-    const { restaurantId, tableNo } = useRestaurant();
+  const { restaurantId, tableNo } = useRestaurant(); 
 
-  const handleFeedbackSubmit = (feedback) => {
-    console.log('Feedback submitted:', feedback);
-    // Here you would typically send the feedback to your backend
+  const handleFeedbackSubmit = async (feedback) => {
+    try {
+      console.log('Feedback submitted:', feedback);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   };
 
   return (
     <SuccessPage
       onGoHome={() => navigate(`/menu?restaurantId=${restaurantId}&tableNo=${tableNo}`)}
       onSubmitFeedback={handleFeedbackSubmit}
+      customerId={tableNo} 
     />
   );
 }
