@@ -16,6 +16,9 @@ export default function Home() {
   const restaurantId = searchParams.get("restaurantId");
   const tableNo = searchParams.get("tableNo");
 
+  // const restaurantId='R1733641669'
+  // const tableNo='2'
+
   const { menuItems, loading: menuLoading, error: menuError } = useMenu(restaurantId);
   const { categories, loading: catLoading, error: catError } = useCategories(restaurantId);
   const { addToCart } = useCart();
