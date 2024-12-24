@@ -5,7 +5,7 @@ import { useRestaurant } from "../context/RestaurantContext";
 
 export default function Success() {
   const navigate = useNavigate();
-  const { restaurantId, tableNo } = useRestaurant(); 
+  const { restaurantId, tableNo,userId } = useRestaurant(); 
 
   const handleFeedbackSubmit = async (feedback) => {
     try {
@@ -19,7 +19,7 @@ export default function Success() {
     <SuccessPage
       onGoHome={() => navigate(`/menu?restaurantId=${restaurantId}&tableNo=${tableNo}`)}
       onSubmitFeedback={handleFeedbackSubmit}
-      customerId={tableNo} 
+      customerId={userId} 
     />
   );
 }

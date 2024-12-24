@@ -62,13 +62,29 @@ export default function Home() {
     addToCart(item);
   };
 
+
   const MenuItem = ({ item }) => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <img src={item.itemImage} alt={item.itemName} className="w-full h-48 object-cover" />
       <div className="p-4">
         <h3 className="text-lg font-semibold">{item.itemName}</h3>
         <p className="text-sm text-gray-600 mb-2">{item.category}</p>
+        <h5 className="text-gray-500 font-medium mb-2">Ingredients:</h5>
+       {/* Ingredients Section */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {item?.ingredients?.map((ingredient, index) => (
+          <div
+            key={index}
+            className="bg-purple-100 text-purple-800 rounded-full px-3 py-1 text-sm shadow-sm"
+          >
+            {ingredient.ingredientName}
+          </div>
+        ))}
+      </div>
         <p className="text-lg font-bold text-purple-600 mb-2">₹ {item.price}</p>
+        
+         
+  
         <button
           onClick={() => handleAddToCart(item)}
           className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700"
@@ -78,6 +94,7 @@ export default function Home() {
       </div>
     </div>
   );
+  
 
   if (menuLoading || catLoading || loading) {
     return (

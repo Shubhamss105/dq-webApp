@@ -10,46 +10,50 @@ import { useRestaurant } from "../context/RestaurantContext";
 export default function Cart() {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, totalAmount, clearCart, removeFromCart } = useCart();
-  const { restaurantId, tableNo } = useRestaurant();
+  const { restaurantId, tableNo,setUserId } = useRestaurant();
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // const restaurantId='R1733641669'
-  // const tableNo='1';
-
-
   const handleUserDetailsSubmit = async (details) => {
     try {
       setLoading(true);
       setError(null);
-
-      const orderPayload= {
-        tableNumber: tableNo,
+  
+      const orderPayload = {
+        tableNumber: tableNo || null,
         restaurantId,
         orderDetails: cartItems?.map(item => ({
-          item_id: item.id,
-          name: item.itemName,
+          id: item.id,
+          itemName: item.itemName,
           price: parseFloat(item.price),
-          quantity: item.quantity
+          quantity: item.quantity,
+          imageUrl: item.itemImage,
+          ingredients: item.ingredients.map(ingredient => ingredient.ingredientName)
         })),
-        phoneNumber: details.phone,
+        phoneNumber: details.phone || null,
         userName: details.name,
-        email: details.email,
-        address: details.address
+        email: details.email || null,
+        address: details.address || null
       };
-
-      await placeOrder(orderPayload);
-      clearCart();
-      setShowUserModal(false);
-      navigate('/success');
+  
+      const response = await placeOrder(orderPayload);
+      if (response?.success) {
+        setUserId(response.data.order.user_id);
+        clearCart();
+        setShowUserModal(false);
+        navigate('/success');
+      } else {
+        throw new Error(response.message || 'Failed to place order');
+      }
     } catch (err) {
       setError(err ? err.message : 'Failed to place order');
     } finally {
       setLoading(false);
     }
   };
+
 
   if (cartItems.length === 0) {
     return (
