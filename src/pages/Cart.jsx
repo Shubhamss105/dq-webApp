@@ -21,17 +21,20 @@ export default function Cart() {
       setLoading(true);
       setError(null);
   
+      const orderDetails = cartItems?.map(item => ({
+        id: String(item.id), 
+        itemName: item.itemName,
+        category: item.category,
+        price: Number(item.price),
+        ingredients: item.ingredients.map(ingredient => ingredient.ingredientName),
+        imageUrl: item.itemImage,
+        quantity: item.quantity
+      }));
+  
       const orderPayload = {
         tableNumber: tableNo || null,
         restaurantId,
-        orderDetails: cartItems?.map(item => ({
-          id: item.id,
-          itemName: item.itemName,
-          price: parseFloat(item.price),
-          quantity: item.quantity,
-          imageUrl: item.itemImage,
-          ingredients: item.ingredients.map(ingredient => ingredient.ingredientName)
-        })),
+        orderDetails: JSON.stringify(orderDetails),
         phoneNumber: details.phone || null,
         userName: details.name,
         email: details.email || null,
@@ -39,6 +42,7 @@ export default function Cart() {
       };
   
       const response = await placeOrder(orderPayload);
+      
       if (response?.success) {
         setUserId(response.data.order.user_id);
         clearCart();
@@ -48,7 +52,7 @@ export default function Cart() {
         throw new Error(response.message || 'Failed to place order');
       }
     } catch (err) {
-      setError(err ? err.message : 'Failed to place order');
+      setError(err?.message || 'Failed to place order');
     } finally {
       setLoading(false);
     }

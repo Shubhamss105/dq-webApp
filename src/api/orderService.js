@@ -6,9 +6,13 @@ export const placeOrder = async (orderData) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(orderData),
+    body: JSON.stringify(orderData)
   });
-  
-  if (!response.ok) throw new Error('Failed to place order');
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || 'Failed to place order');
+  }
+
   return response.json();
 };

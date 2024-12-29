@@ -21,7 +21,7 @@ export default function Home() {
 
   const { menuItems, loading: menuLoading, error: menuError } = useMenu(restaurantId);
   const { categories, loading: catLoading, error: catError } = useCategories(restaurantId);
-  const { addToCart } = useCart();
+  // const { addToCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -54,46 +54,69 @@ export default function Home() {
     loadItems();
   }, [selectedCategory, menuItems]);
 
-  const handleAddToCart = (item) => {
-    if (!addToCart) {
-      console.error("addToCart is not defined.");
-      return;
-    }
-    addToCart(item);
-  };
+  // const handleAddToCart = (item) => {
+  //   if (!addToCart) {
+  //     console.error("addToCart is not defined.");
+  //     return;
+  //   }
+  //   addToCart(item);
+  //   setIsInCart(true);
+  // };
 
 
-  const MenuItem = ({ item }) => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img src={item.itemImage} alt={item.itemName} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{item.itemName}</h3>
-        <p className="text-sm text-gray-600 mb-2">{item.category}</p>
-        <h5 className="text-gray-500 font-medium mb-2">Ingredients:</h5>
-       {/* Ingredients Section */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {item?.ingredients?.map((ingredient, index) => (
-          <div
-            key={index}
-            className="bg-purple-100 text-purple-800 rounded-full px-3 py-1 text-sm shadow-sm"
-          >
-            {ingredient.ingredientName}
-          </div>
-        ))}
-      </div>
-        <p className="text-lg font-bold text-purple-600 mb-2">₹ {item.price}</p>
-        
-         
+  const MenuItem = ({ item}) => {
+    const [isInCart, setIsInCart] = useState(false);
+    const { addToCart } = useCart();
   
-        <button
-          onClick={() => handleAddToCart(item)}
-          className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700"
-        >
-          Add to Cart
-        </button>
+    const handleAddToCart = () => {
+      if (!addToCart) {
+        console.error("addToCart is not defined.");
+        return;
+      }
+      addToCart(item);
+      setIsInCart(true);
+    };
+  
+    return (
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <img
+          src={item.itemImage}
+          alt={item.itemName}
+          className="w-full h-48 object-cover"
+        />
+        <div className="p-4">
+          <h3 className="text-lg font-semibold">{item.itemName}</h3>
+          <p className="text-sm text-gray-600 mb-2">{item.category}</p>
+          <h5 className="text-gray-500 font-medium mb-2">Ingredients:</h5>
+          {/* Ingredients Section */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {item?.ingredients?.map((ingredient, index) => (
+              <div
+                key={index}
+                className="bg-purple-100 text-purple-800 rounded-full px-3 py-1 text-sm shadow-sm"
+              >
+                {ingredient.ingredientName}
+              </div>
+            ))}
+          </div>
+          <p className="text-lg font-bold text-purple-600 mb-2">₹ {item.price}</p>
+  
+          {/* Button for Add to Cart */}
+          <button
+            onClick={handleAddToCart}
+            className={`w-full py-2 rounded-md text-white ${
+              isInCart
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-purple-600 hover:bg-purple-700"
+            }`}
+          >
+            {isInCart ? "Added to Cart" : "Add to Cart"}
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+  
   
 
   if (menuLoading || catLoading || loading) {
@@ -116,6 +139,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <Banner />
       <div className="max-w-7xl mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold my-4 text-center">Table Number: {tableNo}</h1>
         <Categories
           categories={categories}
           selectedCategory={selectedCategory}
