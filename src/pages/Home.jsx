@@ -139,7 +139,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <Banner />
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold my-4 text-center">Table Number: {tableNo}</h1>
+        {tableNo!=='delivery' && <h1 className="text-2xl font-bold my-4 text-center">Table Number: {tableNo}</h1>}
         <Categories
           categories={categories}
           selectedCategory={selectedCategory}

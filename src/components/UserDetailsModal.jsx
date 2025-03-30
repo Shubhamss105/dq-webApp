@@ -6,7 +6,9 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
     name: '',
     email: '',
     phone: '',
-    address: ''
+    address: '',
+    orderType: 'in_restaurant', // default to in restaurant
+    deliver_id: 0 // default to 0 (in restaurant)
   });
 
   const [errors, setErrors] = useState({});
@@ -17,6 +19,9 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
     
     if (!details.name.trim()) newErrors.name = 'Name is required';
     if (!details.phone.trim()) newErrors.phone = 'Phone is required';
+    if (details.orderType === 'delivery' && !details.address.trim()) {
+      newErrors.address = 'Address is required for delivery';
+    }
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -24,6 +29,19 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
     }
     
     onSubmit(details);
+  };
+
+  const handleOrderTypeChange = (e) => {
+    const orderType = e.target.value;
+    setDetails({
+      ...details,
+      orderType,
+      deliver_id: orderType === 'delivery' ? 1 : 0
+    });
+    // Clear address error when switching order types
+    if (errors.address) {
+      setErrors({...errors, address: null});
+    }
   };
 
   return (
@@ -88,18 +106,38 @@ export default function UserDetailsModal({ onSubmit, onClose, loading }) {
               <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
             )}
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Order Type *
+            </label>
+            <select
+              value={details.orderType}
+              onChange={handleOrderTypeChange}
+              disabled={loading}
+              className="w-full p-2 border border-gray-300 rounded-md disabled:bg-gray-100"
+            >
+              <option value="in_restaurant">In Restaurant</option>
+              <option value="delivery">Delivery</option>
+            </select>
+          </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Address
+              Address {details.orderType === 'delivery' && '*'}
             </label>
             <textarea
               value={details.address}
               onChange={(e) => setDetails({ ...details, address: e.target.value })}
               disabled={loading}
-              className="w-full p-2 border border-gray-300 rounded-md disabled:bg-gray-100"
+              className={`w-full p-2 border rounded-md ${
+                errors.address ? 'border-red-500' : 'border-gray-300'
+              } disabled:bg-gray-100`}
               rows={3}
             />
+            {errors.address && (
+              <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+            )}
           </div>
           
           <button

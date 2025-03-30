@@ -38,8 +38,10 @@ export default function Cart() {
         phoneNumber: details.phone || null,
         userName: details.name,
         email: details.email || null,
-        address: details.address || null
+        address: details.address || null,
+        deliver_id: details.deliver_id || 0,
       };
+      // console.log('orderPayload',orderPayload)
   
       const response = await placeOrder(orderPayload);
       
